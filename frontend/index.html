@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>智视门禁系统 - 管理后台</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/iconify-icon@2.1.0/dist/iconify-icon.min.js"></script>
+</head>
+<body>
+    <div class="app-layout">
+        <!-- 侧边栏 -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-brand">
+                <div class="brand-icon">
+                    <iconify-icon icon="fa6-solid:id-card-clip"></iconify-icon>
+                </div>
+                <span class="brand-text">智视门禁系统</span>
+            </div>
+            <nav class="sidebar-nav">
+                <div class="nav-section-title">主要功能</div>
+                <a class="nav-item active" data-tab="register" id="nav-register">
+                    <iconify-icon icon="fa6-solid:user-plus"></iconify-icon>
+                    <span>人脸注册</span>
+                </a>
+                <a class="nav-item" data-tab="recognition" id="nav-recognition">
+                    <iconify-icon icon="fa6-solid:camera-retro"></iconify-icon>
+                    <span>实时识别</span>
+                    <span class="nav-badge">BETA</span>
+                </a>
+                <a class="nav-item" data-tab="alarm" id="nav-alarm">
+                    <iconify-icon icon="fa6-solid:triangle-exclamation"></iconify-icon>
+                    <span>异常告警</span>
+                </a>
+                <div class="nav-separator"></div>
+                <div class="nav-section-title">数据分析</div>
+                <a class="nav-item" data-tab="report" id="nav-report">
+                    <iconify-icon icon="fa6-solid:chart-bar"></iconify-icon>
+                    <span>统计报表</span>
+                </a>
+                <a class="nav-item" data-tab="permission" id="nav-permission">
+                    <iconify-icon icon="fa6-solid:shield-halved"></iconify-icon>
+                    <span>权限管理</span>
+                </a>
+            </nav>
+            <div class="sidebar-footer">
+                <div class="user-info">
+                    <div class="user-avatar" id="userAvatar">A</div>
+                    <div>
+                        <div class="user-name" id="sidebarUsername">admin</div>
+                        <div class="user-role" id="sidebarRole">超级管理员</div>
+                    </div>
+                    <button class="btn-icon" id="logoutBtn" title="退出登录" style="margin-left:auto;">
+                        <iconify-icon icon="mdi:logout"></iconify-icon>
+                    </button>
+                </div>
+            </div>
+        </aside>
+
+        <!-- 主内容区 -->
+        <main class="main-area">
+            <!-- 顶部栏 -->
+            <header class="topbar">
+                <div class="topbar-left">
+                    <button class="btn-icon" id="toggleSidebar" title="收起侧边栏">
+                        <iconify-icon icon="fa6-solid:bars"></iconify-icon>
+                    </button>
+                    <h2 class="page-title" id="pageTitle">人脸注册</h2>
+                </div>
+                <div class="topbar-right">
+                    <button class="btn-icon has-dot" id="notificationBtn" title="通知">
+                        <iconify-icon icon="fa6-solid:bell"></iconify-icon>
+                    </button>
+                    <span id="connectionStatus" class="conn-status offline">未连接</span>
+                    <div class="topbar-divider"></div>
+                    <span id="currentTime" class="topbar-time"></span>
+                </div>
+            </header>
+
+            <!-- 内容容器 -->
+            <div class="content-area" id="content-area">
+                <!-- 1. 人脸注册 -->
+                <section class="page-section active" id="page-register">
+                    <div class="space-y">
+                        <div class="grid-3">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h3>人员信息登记</h3>
+                                    <p>填写人员信息后拍照注册</p>
+                                </div>
+                                <div class="card-body">
+                                    <form id="registerForm" class="form-group">
+                                        <div class="form-row">
+                                            <div class="form-field">
+                                                <label>姓名 <span class="required-asterisk">*</span></label>
+                                                <input type="text" id="name" class="input" placeholder="请输入姓名" required>
+                                            </div>
+                                            <div class="form-field">
+                                                <label>学号 <span class="required-asterisk">*</span></label>
+                                                <input type="text" id="studentId" class="input" placeholder="请输入学号" required>
+                                            </div>
+                                        </div>
+                                        <div class="form-row">
+                                            <div class="form-field">
+                                                <label>院系</label>
+                                                <input type="text" id="department" class="input" placeholder="请输入院系">
+                                            </div>
+                                            <div class="form-field">
+                                                <label>角色</label>
+                                                <select id="role" class="input">
+                                                    <option value="student">学生</option>
+                                                    <option value="teacher">教师</option>
+                                                    <option value="staff">工作人员</option>
+                                                    <option value="visitor">访客</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+
+                            <div class="card" style="grid-column: span 2;">
+                                <div class="card-header">
+                                    <h3>人脸图像采集</h3>
+                                    <p>拍照或上传照片后，点击注册人脸按钮</p>
+                                </div>
+                                <div class="card-body">
+                                    <div class="register-video-grid">
+                                        <div class="video-preview-area">
+                                            <video id="registerVideo" class="register-video" autoplay playsinline></video>
+                                            <canvas id="registerCanvas" style="display:none;"></canvas>
+                                            <img id="registerImage" class="register-image" style="display:none;" alt="">
+                                            <div id="registerPlaceholder" class="register-placeholder">
+                                                <iconify-icon icon="material-symbols:photo-camera-outline" class="placeholder-icon-custom"></iconify-icon>
+                                                <p class="placeholder-text">点击拍照或上传照片</p>
+                                                <p class="placeholder-hint">支持 JPG / PNG 格式</p>
+                                            </div>
+                                        </div>
+                                        <div class="btn-group-register">
+                                            <button id="captureBtn" class="btn btn-primary"><span class="iconify" data-icon="mdi:camera"></span> 拍照</button>
+                                            <button id="uploadBtn" class="btn btn-outline"><span class="iconify" data-icon="mdi:upload"></span> 上传照片</button>
+                                            <input type="file" id="fileInput" accept="image/*" style="display:none;">
+                                            <button id="registerFaceBtn" class="btn btn-success" disabled>请先拍照或上传照片</button>
+                                        </div>
+                                    </div>
+                                    <div id="registerStatus" class="status-msg"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="grid-3">
+                            <div class="card">
+                                <h3 class="card-title">已注册人员</h3>
+                                <div class="search-box">
+                                    <iconify-icon icon="fa6-solid:magnifying-glass"></iconify-icon>
+                                    <input type="text" id="searchPerson" placeholder="搜索人员...">
+                                </div>
+                                <div class="person-list" id="personList">
+                                    <p class="empty-text">暂无数据</p>
+                                </div>
+                            </div>
+
+                            <div class="card" style="grid-column: span 2;">
+                                <div class="card-header">
+                                    <h3>人脸匹配测试</h3>
+                                    <p>拍照或上传照片验证是否已注册</p>
+                                </div>
+                                <div class="card-body">
+                                    <div class="register-video-grid">
+                                        <div class="video-preview-area" style="min-height: 220px;">
+                                            <video id="matchTestVideo" class="register-video" autoplay playsinline style="display:none;"></video>
+                                            <img id="matchTestImage" class="register-image" style="display:none;" alt="">
+                                            <div id="matchTestPlaceholder" class="register-placeholder">
+                                                <iconify-icon icon="mdi:face-recognition" class="placeholder-icon-custom"></iconify-icon>
+                                                <p class="placeholder-text">点击拍照或上传测试照片</p>
+                                                <p class="placeholder-hint">验证是否已注册</p>
+                                            </div>
+                                        </div>
+                                        <div class="btn-group-register">
+                                            <button id="matchTestCaptureBtn" class="btn btn-outline"><span class="iconify" data-icon="mdi:camera"></span> 拍照</button>
+                                            <button id="matchTestUploadBtn" class="btn btn-outline"><span class="iconify" data-icon="mdi:upload"></span> 上传照片</button>
+                                            <input type="file" id="matchTestFileInput" accept="image/*" style="display:none;">
+                                            <button type="button" id="matchTestClearBtn" class="btn btn-outline" style="display:none;">清空照片</button>
+                                            <button type="button" id="matchTestBtn" class="btn btn-primary" disabled>开始匹配</button>
+                                        </div>
+                                    </div>
+                                    <p id="matchTestStatus" class="status-msg"></p>
+                                    <div class="match-result" id="matchTestResult" style="display:none;">
+                                        <h4>匹配结果</h4>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 2. 实时识别 -->
+                <section class="page-section" id="page-recognition">
+                    <div class="grid-right-sidebar">
+                        <div class="card">
+                            <h3 class="card-title">实时监控</h3>
+                            <div class="video-box large" id="recognitionVideoBox">
+                                <video id="recognitionVideo" autoplay playsinline></video>
+                                <canvas id="recognitionCanvas"></canvas>
+                                <img id="uploadedRecognitionImage" style="display:none;">
+                                <div class="scan-overlay">
+                                    <div class="scan-frame">
+                                        <div class="scan-corner tl"></div>
+                                        <div class="scan-corner tr"></div>
+                                        <div class="scan-corner bl"></div>
+                                        <div class="scan-corner br"></div>
+                                        <div class="scan-line"></div>
+                                    </div>
+                                </div>
+                                <div class="face-matches" id="faceMatches"></div>
+                            </div>
+                            <div class="btn-group">
+                                <button type="button" id="startRecognition" class="btn btn-primary">开始识别</button>
+                                <button type="button" id="stopRecognition" class="btn btn-danger" disabled>停止</button>
+                                <button type="button" id="resetRecognition" class="btn btn-outline" disabled>刷新</button>
+                                <button type="button" id="uploadRecognitionBtn" class="btn btn-outline">上传照片识别</button>
+                                <input type="file" id="recognitionFileInput" accept="image/*" style="display:none;">
+                                <span id="fpsCounter" class="fps-badge">FPS: --</span>
+                                <span id="recognitionStatus" class="status-badge">就绪</span>
+                            </div>
+                            <div class="form-group" style="margin-top:10px;">
+                                <label style="font-size:.82rem;font-weight:500;">模拟门禁位置</label>
+                                <select id="recognitionCamera">
+                                    <option value="">全部区域（不限门禁）</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="space-y">
+                            <div class="card">
+                                <h3 class="card-title">今日统计</h3>
+                                <div class="stats-grid-2">
+                                    <div class="stat-card">
+                                        <div class="stat-icon blue"><iconify-icon icon="fa6-solid:users-rectangle"></iconify-icon></div>
+                                        <div>
+                                            <p class="stat-label">总通行人次</p>
+                                            <h3 class="stat-value" id="totalCount">0</h3>
+                                        </div>
+                                    </div>
+                                    <div class="stat-card">
+                                        <div class="stat-icon green"><iconify-icon icon="fa6-solid:user-check"></iconify-icon></div>
+                                        <div>
+                                            <p class="stat-label">正常通行</p>
+                                            <h3 class="stat-value" id="successCount">0</h3>
+                                        </div>
+                                    </div>
+                                    <div class="stat-card">
+                                        <div class="stat-icon orange"><iconify-icon icon="fa6-solid:triangle-exclamation"></iconify-icon></div>
+                                        <div>
+                                            <p class="stat-label">异常事件</p>
+                                            <h3 class="stat-value" id="abnormalCount">0</h3>
+                                        </div>
+                                    </div>
+                                    <div class="stat-card">
+                                        <div class="stat-icon red"><iconify-icon icon="fa6-solid:ban"></iconify-icon></div>
+                                        <div>
+                                            <p class="stat-label">禁止通行</p>
+                                            <h3 class="stat-value" id="denyCount">0</h3>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="card">
+                                <h3 class="card-title">人脸匹配结果</h3>
+                                <div class="match-result" id="matchResult">
+                                    <div class="match-placeholder">
+                                        <iconify-icon icon="fa6-solid:magnifying-glass" class="placeholder-icon"></iconify-icon>
+                                        <p>等待识别...</p>
+                                        <p class="small-text">点击"开始识别"按钮开始人脸匹配</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="card">
+                                <h3 class="card-title">实时记录</h3>
+                                <div class="log-list" id="accessLogList">
+                                    <p class="empty-text">暂无通行记录</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 3. 异常告警 -->
+                <section class="page-section" id="page-alarm">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title" style="margin-bottom:0;">异常告警记录</h3>
+                            <div class="card-actions">
+                                <select id="alarmFilter">
+                                    <option value="">全部类型</option>
+                                    <option value="未注册用户">未注册用户</option>
+                                    <option value="活体检测失败">活体检测失败</option>
+                                    <option value="尾随行为">尾随行为</option>
+                                </select>
+                                <button id="refreshAlarm" class="btn btn-outline btn-sm">刷新</button>
+                                <button id="clearAlarm" class="btn btn-danger btn-sm">清空</button>
+                            </div>
+                        </div>
+                        <div class="alarm-stats-row">
+                            <span class="tag tag-red">未注册用户 <b id="unknownCount">0</b></span>
+                            <span class="tag tag-orange">活体检测失败 <b id="livenessCount">0</b></span>
+                            <span class="tag tag-blue">尾随行为 <b id="tailgatingCount">0</b></span>
+                        </div>
+                        <table class="data-table" id="alarmTable">
+                            <thead>
+                                <tr>
+                                    <th>类型</th>
+                                    <th>描述</th>
+                                    <th>时间</th>
+                                    <th>状态</th>
+                                    <th>处理</th>
+                                </tr>
+                            </thead>
+                            <tbody id="alarmTableBody">
+                                <tr><td colspan="5" class="empty-text">暂无告警记录</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <!-- 4. 统计报表 -->
+                <section class="page-section" id="page-report">
+                    <div class="card">
+                        <h3 class="card-title">通行统计报表</h3>
+                        <div class="filter-bar">
+                            <div class="form-group" style="margin-bottom:0;">
+                                <label>开始日期</label>
+                                <input type="date" id="reportStartDate">
+                            </div>
+                            <div class="form-group" style="margin-bottom:0;">
+                                <label>结束日期</label>
+                                <input type="date" id="reportEndDate">
+                            </div>
+                            <button id="generateReport" class="btn btn-primary" style="align-self:flex-end;">生成报表</button>
+                        </div>
+
+                        <div class="report-stats">
+                            <div class="stat-card">
+                                <div class="stat-icon blue"><iconify-icon icon="fa6-solid:users-rectangle"></iconify-icon></div>
+                                <div>
+                                    <p class="stat-label">总通行人次</p>
+                                    <h3 class="stat-value" id="reportTotal">0</h3>
+                                </div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-icon green"><iconify-icon icon="fa6-solid:user-check"></iconify-icon></div>
+                                <div>
+                                    <p class="stat-label">成功通行</p>
+                                    <h3 class="stat-value" id="reportSuccess">0</h3>
+                                </div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-icon red"><iconify-icon icon="fa6-solid:ban"></iconify-icon></div>
+                                <div>
+                                    <p class="stat-label">失败次数</p>
+                                    <h3 class="stat-value" id="reportFail">0</h3>
+                                </div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-icon orange"><iconify-icon icon="fa6-solid:clock"></iconify-icon></div>
+                                <div>
+                                    <p class="stat-label">异常事件</p>
+                                    <h3 class="stat-value" id="reportAbnormal">0</h3>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="report-section">
+                            <h4>详细记录</h4>
+                            <div class="table-scroll">
+                                <table class="data-table" id="reportTable">
+                                    <thead>
+                                        <tr>
+                                            <th>时间</th>
+                                            <th>姓名</th>
+                                            <th>学号</th>
+                                            <th>状态</th>
+                                            <th>置信度</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="reportTableBody">
+                                        <tr><td colspan="5" class="empty-text">请选择日期范围生成报表</td></tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <div class="btn-group" style="justify-content:flex-end;">
+                            <button id="exportCSV" class="btn btn-outline">导出CSV</button>
+                            <button id="exportReport" class="btn btn-primary">导出报表</button>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 5. 权限管理 -->
+                <section class="page-section" id="page-permission">
+                    <div class="grid-right-sidebar">
+                        <div class="card">
+                            <div class="card-header">
+                                <h3 class="card-title" style="margin-bottom:0;">人员管理</h3>
+                                <div class="card-actions">
+                                    <button id="refreshPersons" class="btn btn-outline btn-sm">刷新</button>
+                                    <button id="importPersons" class="btn btn-primary btn-sm">批量导入</button>
+                                    <input type="file" id="importFile" accept=".csv" style="display:none;">
+                                </div>
+                            </div>
+                            <table class="data-table" id="personsTable">
+                                <thead>
+                                    <tr>
+                                        <th>姓名</th>
+                                        <th>学号</th>
+                                        <th>院系</th>
+                                        <th>角色</th>
+                                        <th>状态</th>
+                                        <th>已设权限</th>
+                                        <th>操作</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="personsTableBody">
+                                    <tr><td colspan="7" class="empty-text">暂无人员数据</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div class="card">
+                            <h3 class="card-title">权限设置</h3>
+                            <form id="permissionForm">
+                                <div class="form-group">
+                                    <label>选择人员</label>
+                                    <p id="selectedPerson" class="selected-box">未选择 — 请在左侧点击「选择」</p>
+                                </div>
+                                <div class="form-group">
+                                    <label>通行区域 <span class="area-count" id="areaCount">未选择区域</span></label>
+                                    <div class="checkbox-area-list" id="gateCheckboxes">
+                                        <p class="empty-text" style="padding:12px;">加载门禁区域中...</p>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label>通行时段</label>
+                                    <div class="time-presets">
+                                        <button type="button" class="btn btn-sm btn-outline time-preset" data-start="00:00" data-end="23:59">全天</button>
+                                        <button type="button" class="btn btn-sm btn-outline time-preset" data-start="08:00" data-end="12:00">上午</button>
+                                        <button type="button" class="btn btn-sm btn-outline time-preset" data-start="14:00" data-end="18:00">下午</button>
+                                        <button type="button" class="btn btn-sm btn-outline time-preset" data-start="18:00" data-end="23:00">晚间</button>
+                                    </div>
+                                    <div class="range-row">
+                                        <input type="time" id="startTime" value="08:00">
+                                        <span>至</span>
+                                        <input type="time" id="endTime" value="18:00">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label>有效期</label>
+                                    <div class="range-row">
+                                        <input type="date" id="validFrom">
+                                        <span>至</span>
+                                        <input type="date" id="validTo">
+                                    </div>
+                                </div>
+                                <button type="submit" class="btn btn-primary btn-full">批量设置权限</button>
+                            </form>
+                            <div class="perm-list-section" id="currentPerms" style="display:none;">
+                                <h4 class="card-title" style="font-size:.92rem;">已开通权限</h4>
+                                <div id="permList"></div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <!-- 人员详情弹窗 -->
+    <div id="personDetailModal" class="modal-overlay">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h3 id="detailModalTitle">人员详情</h3>
+                <button class="modal-close" onclick="closePersonDetail()">&times;</button>
+            </div>
+            <div class="modal-body" id="detailModalBody"></div>
+        </div>
+    </div>
+
+    <!-- Toast -->
+    <div id="toast" class="toast"></div>
+
+    <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>

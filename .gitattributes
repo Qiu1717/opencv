@@ -1,0 +1,25 @@
+# 统一换行符
+* text=auto
+*.py    text diff=python
+*.js    text diff=javascript
+*.css   text
+*.html  text
+*.md    text
+*.txt   text
+*.bat   text eol=crlf
+*.json  text
+# ---- Git LFS：大体积模型权重与二进制数据 ----
+*.onnx        filter=lfs diff=lfs merge=lfs -text
+*.caffemodel  filter=lfs diff=lfs merge=lfs -text
+*.pgm         filter=lfs diff=lfs merge=lfs -text
+*.pkl         filter=lfs diff=lfs merge=lfs -text
+*.jpg         filter=lfs diff=lfs merge=lfs -text
+*.jpeg        filter=lfs diff=lfs merge=lfs -text
+*.png         filter=lfs diff=lfs merge=lfs -text
+*.db          filter=lfs diff=lfs merge=lfs -text
+*.sqlite      filter=lfs diff=lfs merge=lfs -text
+# 注意：以下两个文件超过 GitHub 单文件 100MB 上限（含 LFS），
+# w600k_r50.onnx = 166.3 MB，1k3d68.onnx = 137.0 MB，
+# 无法提交，请运行 backend/download_models.py 获取。
+backend/models/insightface/models/buffalo_l/w600k_r50.onnx filter=lfs diff=lfs merge=lfs -text
+backend/models/insightface/models/buffalo_l/1k3d68.onnx     filter=lfs diff=lfs merge=lfs -text

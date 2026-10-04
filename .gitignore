@@ -1,0 +1,162 @@
+# ==========================================================
+# 本仓库仅收录源代码与必要配置
+# 模型权重、数据集、数据库、日志等大体积或敏感内容一律排除
+# ==========================================================
+
+# ---- Python 缓存与字节码 ----
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.pyd
+
+# ---- 构建产物与打包 ----
+build/
+dist/
+*.egg-info/
+.eggs/
+sdist/
+wheels/
+pip-wheel-metadata/
+.installed.cfg
+MANIFEST
+
+# ---- 依赖目录 ----
+venv/
+.venv/
+env/
+ENV/
+env.bak/
+venv.bak/
+node_modules/
+__pypackages__/
+.pypdf/
+
+# ---- 模型权重（大文件，需自行下载）----
+*.onnx
+*.caffemodel
+*.pb
+*.pt
+*.pth
+*.h5
+*.weights
+*.tflite
+*.bin
+backend/models/insightface/
+backend/models/features.pkl
+backend/models/classifier.pkl
+
+# ---- 数据集 ----
+dataset/
+testface/
+*.pgm
+*.jpg
+*.jpeg
+*.png
+*.bmp
+*.tif
+*.tiff
+data/
+
+# ---- 运行时数据库（含人脸图像与特征向量）----
+*.db
+*.sqlite
+*.sqlite3
+*.db3
+backend/uploads/
+uploads/
+
+# ---- 日志 ----
+*.log
+logs/
+log/
+*.pid
+*.seed
+
+# ---- 密钥、凭据与本地环境配置 ----
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+*.keystore
+*.jks
+secrets*.json
+*credentials*
+service-account*.json
+.netrc
+
+# ---- 非代码类文档（PPT / 报告 / 论文等）----
+*.ppt
+*.pptx
+*.doc
+*.docx
+*.pdf
+*.xls
+*.xlsx
+*.rtf
+*.odt
+开发文档.md
+docs/*.docx
+docs/*.pdf
+
+# ---- IDE 与编辑器 ----
+.idea/
+.vscode/
+*.iml
+*.ipr
+*.iws
+*.swp
+*.swo
+*~
+.project
+.classpath
+.settings/
+*.sublime-workspace
+
+# ---- 工具生成的本地状态 ----
+.codegraph/
+.reasonix/
+.workbuddy/
+.history/
+
+# ---- 操作系统临时文件 ----
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+desktop.ini
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+$RECYCLE.BIN/
+*.tmp
+*.temp
+*.bak
+*.orig
+*.swp
+nohup.out
+
+# ---- 测试与覆盖率报告 ----
+.pytest_cache/
+.coverage
+.coverage.*
+htmlcov/
+coverage.xml
+.tox/
+.mypy_cache/
+.ruff_cache/
+
+# ---- Jupyter ----
+.ipynb_checkpoints/
+*.ipynb_checkpoints
+
+# ---- 本地认证与临时脚本产物 ----
+auth.txt
+*_b64.txt
+verify.ps1
+*_do_push.ps1
+cleanup_*.py
