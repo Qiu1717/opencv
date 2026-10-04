@@ -160,3 +160,10 @@ auth.txt
 verify.ps1
 *_do_push.ps1
 cleanup_*.py
+final_clean.py
+tracked.txt
+ok.txt
+st_final.txt
+commitmsg.txt
+pushout.txt
+risk.txt
