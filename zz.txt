@@ -1,0 +1,7 @@
+﻿status: M .env.example
+ M .gitignore
+ M README.md
+ M backend/app.py
+ M backend/requirements.txt
+?? cd2.py
+?? cdone.txt

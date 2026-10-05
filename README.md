@@ -153,6 +153,15 @@ python app.py
 
 浏览器打开 <http://localhost:5000>
 
+若 5000 端口被占用，可通过环境变量 `PORT` 改用其他端口：
+
+```bash
+# Windows
+set PORT=5001 && python app.py
+# Linux / macOS
+PORT=5001 python app.py
+```
+
 > 首次启动会自动建表并创建管理员账号 `admin`。密码取自环境变量 `ADMIN_PASSWORD`；
 > 若未设置则自动生成随机密码，请查看启动日志。
 
@@ -168,6 +177,7 @@ python app.py
 |------|------|----------|
 | `SECRET_KEY` | Flask 会话签名密钥 | 未设置时每次启动自动生成随机值（重启后需重新登录） |
 | `ADMIN_PASSWORD` | 初始管理员密码 | 未设置时自动生成随机密码，见启动日志 |
+| `PORT` | 服务监听端口 | 未设置时为 `5000` |
 
 ### 关键配置项
 
@@ -216,9 +226,25 @@ python app.py
 
 浏览器要求安全上下文。`localhost` 可直接访问；若通过局域网IP 访问，需配置 HTTPS，否则浏览器会禁用摄像头权限。
 
-**Q：WebSocket 连接失败？**
+**Q：页面右上角显示「未连接」？**
 
-确认 `flask-socketio`、`python-socketio`、`python-engineio` 版本匹配（见 `backend/requirements.txt`），并检查 5000 端口未被占用。
+这是 WebSocket 未连上。日志里若出现 `AttributeError: can't set attribute 'session'`，
+说明 Flask 版本过新 —— Flask 3.x 把 session 改为只读属性，而 Flask-SocketIO 5.3.x 仍尝试赋值。
+按 `backend/requirements.txt` 降级即可：
+
+```bash
+pip install "Flask==2.3.3" "Werkzeug==2.3.7"
+```
+
+若日志无报错但仍未连接，检查 5000 端口占用与浏览器控制台的 WebSocket 报错。
+
+**Q：启动报 `module 'cv2.dnn' has no attribute 'readNetFromCaffe'`？**
+
+opencv-python 5.x 移除了该 API。需降级到 4.x：
+
+```bash
+pip install "opencv-python==4.10.0.84"
+```
 
 **Q：如何重新训练分类器？**
 

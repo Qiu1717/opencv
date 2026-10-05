@@ -159,6 +159,8 @@ auth.txt
 *_b64.txt
 verify.ps1
 *_do_push.ps1
+run_server.ps1
+start_server.ps1
 cleanup_*.py
 final_clean.py
 tracked.txt
@@ -167,3 +169,11 @@ st_final.txt
 commitmsg.txt
 pushout.txt
 risk.txt
+
+# 本地启动脚本与运行日志（含本机路径与 PID，不入库）
+启动项目.bat
+run.log
+run_err.log
+srv.log
+server.log
+cd.py

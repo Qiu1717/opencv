@@ -858,5 +858,6 @@ def handle_video_frame(data):
 if __name__ == '__main__':
     os.makedirs('models', exist_ok=True)
     os.makedirs('uploads', exist_ok=True)
-    logger.info("Starting face recognition server on port 5000...")
-    socketio.run(app, host='0.0.0.0', port=5000, debug=False, use_reloader=False, allow_unsafe_werkzeug=True)
+    port = int(os.environ.get('PORT', 5000))
+    logger.info("Starting face recognition server on port %d...", port)
+    socketio.run(app, host='0.0.0.0', port=port, debug=False, use_reloader=False, allow_unsafe_werkzeug=True)
