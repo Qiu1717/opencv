@@ -177,3 +177,9 @@ run_err.log
 srv.log
 server.log
 cd.py
+cd*.py
+z*.txt
+pp*.txt
+m.txt
+cm.txt
+pu.txt

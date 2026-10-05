@@ -1,9 +1,0 @@
-Fix WebSocket incompatibility and make port configurable
-
-- Pin Flask 2.3.3 / Werkzeug 2.3.7: Flask 3.x made session read-only,
-  breaking Flask-SocketIO 5.3.6 (AttributeError: can't set attribute 'session')
-- Bump opencv-python to 4.10.0.84: 5.x removed cv2.dnn.readNetFromCaffe,
-  and 4.5.5.64 is no longer installable
-- Align python-socketio to 5.11.2
-- Read listen port from PORT env var instead of hardcoded 5000
-- Document the above in README FAQ and .env.example
